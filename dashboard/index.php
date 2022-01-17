@@ -40,6 +40,7 @@ header("Pragma: no-cache");
             </form>
         </div>
         <div class="dashboard">
+            logged in as <span id="username"></span>
             <h1>OnLine Users</h1>
             <table>
                 <thead>
@@ -51,9 +52,30 @@ header("Pragma: no-cache");
                     </tr>
                 </thead>
                 <tbody>
-
+                    <tr><td>No Online Users</td></tr>
                 </tbody>
             </table>
+        </div>
+        <div id="user-pop">
+            <div class="content">
+                <h2>User Data:</h2>
+                <div class="user-data" data-type="name">
+                    <label>Name:</label><span></span>
+                </div>
+                <div class="user-data" data-type="email">
+                    <label>Email:</label><span></span>
+                </div>
+                <div class="user-data" data-type="useragent">
+                    <label>User-Agent:</label><span></span>
+                </div>
+                <div class="user-data" data-type="entancetime">
+                    <label>Entance Time:</label><span></span>
+                </div>
+                <div class="user-data" data-type="visitcount">
+                    <label>Visit Count:</label><span></span>
+                </div>
+            </div>
+
         </div>
     </div>
 </div>

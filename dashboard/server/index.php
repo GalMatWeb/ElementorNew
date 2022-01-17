@@ -37,9 +37,9 @@ try {
                 $user->set_isOnLine(1);
                 $user->set_userAgent($_SERVER['HTTP_USER_AGENT']);
                 $user->set_visitCount();
-                $user->set_entranceTime(date("Y-m-d H:i"));
+                $user->set_entranceTime(date("Y-m-d H:i:s"));
                 $user->set_userIp($_SERVER['REMOTE_ADDR']);
-                $user->set_lastUpdate();
+                $user->set_lastUpdate(date("Y-m-d H:i:s"));
                 dblayer::updateUser($user->id , $user);
                 $result['status'] = 'ok';
                 $result['userID'] = $user->id;
@@ -51,15 +51,26 @@ try {
             if(!$userID){
                 throw new Exception("No User Id Found");
             }
-            dblayer::removeUserFromOnlineList($userID);
+            $user = dblayer::getUserByID($userID);
+            $user->set_isOnLine(0);
+            $user->set_userAgent($_SERVER['HTTP_USER_AGENT']);
+            $user->set_visitCount();
+            $user->set_entranceTime(date("Y-m-d H:i"));
+            $user->set_userIp($_SERVER['REMOTE_ADDR']);
+            $user->set_lastUpdate(date("Y-m-d H:i:s"));
+            dblayer::updateUser($user->id , $user);
             break;
         case 'list':
             $isLoggedIn = 1;
-            if(!isset($_SERVER['HTTP_USERID']) || !$isLoggedIn) { //TODO check if is logged in
+            $userID = isset($_SERVER['HTTP_USERID']) ? $_SERVER['HTTP_USERID'] : null;
+            if(!$userID) { //TODO check if is logged in
                 throw new Exception("you are not logged in");
             }
-            $sendUsers = dblayer::retrieveAllUser();
-            unset($sendUsers[$_SERVER['HTTP_USERID']]);
+            $user = dblayer::getUserByID($userID);
+            $user->set_lastUpdate(date("Y-m-d H:i:s"));
+            $user->set_isOnLine(1);
+            dblayer::updateUser($user->id , $user);
+            $sendUsers = dblayer::retrieveAllOnlineUsers($userID);
             $result['users'] = $sendUsers;
             break;
     }

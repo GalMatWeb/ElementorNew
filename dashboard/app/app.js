@@ -3,7 +3,7 @@ import { AppDispatcher } from './appdispatcher.js';
 import { http } from './http.js';
 
 export const App = (function(){
-
+    let timers = [];
     let screenList = {
         login: {
             selector: '.log-in',
@@ -16,7 +16,7 @@ export const App = (function(){
             selector: '.dashboard',
             status: 'off',
             onload: function () {
-                window.setInterval(loadList , 3000);
+                timers['list'] = window.setInterval(loadList , 3000);
             }
         }
     };
@@ -24,6 +24,28 @@ export const App = (function(){
     let usersList = {};
 
     let currScreen = 'login';
+
+    let userPop = function(uid){
+        for(const [id,user] of Object.entries(usersList)) {
+            if(user.id == uid) {
+                document.querySelector(".user-data[data-type='name'] span").innerHTML = user.name;
+                document.querySelector(".user-data[data-type='email'] span").innerHTML = user.email;
+                document.querySelector(".user-data[data-type='useragent'] span").innerHTML = user.userAgent;
+                document.querySelector(".user-data[data-type='entancetime'] span").innerHTML = user.entranceTime;
+                document.querySelector(".user-data[data-type='visitcount'] span").innerHTML = user.visitCount;
+                document.getElementById("user-pop").style.display = 'block';
+                document.getElementById("user-pop").addEventListener("click",function (event) {
+                    if(event.target.id == 'user-pop') {
+                        document.getElementById("user-pop").style.display = 'none';
+                        document.querySelector(".user-data span").innerHTML = '';
+                    }
+
+                });
+                return;
+            }
+        }
+
+    }
 
     let showList = function(response){
 
@@ -34,9 +56,17 @@ export const App = (function(){
             tableBody.innerHTML = '';
             let line ='';
             for(const [id,user] of Object.entries(users)) {
-                line +=  '<tr><td>'+user.name+'</td><td>'+user.entranceTime+'</td><td>'+user.lastUpdate+'</td><td>'+user.userIp+'</td></tr>';
+                line +=  '<tr class="user-row" data-id="'+user.id+'"><td>'+user.name+'</td><td>'+user.entranceTime+'</td><td>'+user.lastUpdate+'</td><td>'+user.userIp+'</td></tr>';
             }
             tableBody.innerHTML = line;
+            let rows = document.querySelectorAll(".user-row");
+            for (let i = 0; i < rows.length; i++) {
+                rows[i].addEventListener("click",function () {
+
+                    userPop(this.dataset.id);
+                })
+            }
+
         }
 
 
@@ -53,6 +83,7 @@ export const App = (function(){
         if(res.status == 'ok') {
             Connect.userID = res.userID;
             Connect.name = res.name;
+            document.getElementById("username").innerHTML = Connect.name;
             switchScreen("dashboard");
             return;
         }
@@ -116,15 +147,23 @@ export const App = (function(){
         event.preventDefault();
         Connect.userID = null;
         Connect.name = null;
+        clearInterval(timers['list']);
         http.httpGet('?act=logout');
+        switchScreen("login");
     };
 
 
     let init = function () {
         let self = this;
-        window.addEventListener( 'unload', function( event ) {
+
+        window.addEventListener( 'beforeunload', function( event ) {
+            alert("logout");
             http.httpGet('?act=logout');
-        });
+        }, {capture: true});
+        window.addEventListener( 'unload', function( event ) {
+            alert("logout");
+            http.httpGet('?act=logout');
+        }, {capture: true});
         if(!self.isLoggedIn()) {
             self.switchScreen('login');
             return;
@@ -140,8 +179,8 @@ export const App = (function(){
         switchScreen: switchScreen,
         currScreen: currScreen,
         screenList: screenList,
-        showScreen: showScreen,
-        logout: logout
+        logout: logout,
+        userPop: userPop
     }
 
 })();

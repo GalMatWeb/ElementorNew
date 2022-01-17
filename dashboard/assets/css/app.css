@@ -78,14 +78,9 @@ body {
   display: block;
   width: 100%;
   font-size: 16px;
-  top: 25px;
-  left: 10px;
-  transition: all 0.2s ease;
-}
-.log-in form .content .input-field input:focus + label {
-  font-size: 10px;
   top: 5px;
-  left: 5px;
+  left: 0px;
+  transition: all 0.2s ease;
 }
 .log-in form .content .action {
   display: flex;
@@ -170,6 +165,42 @@ body {
 .dashboard.show {
   display: -webkit-box;
   display: flex;
+}
+
+#user-pop {
+  position: fixed;
+  display: none;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  background: rgba(0, 0, 0, 0.9);
+}
+#user-pop .content {
+  position: absolute;
+  display: block;
+  width: 360px;
+  height: 400px;
+  background: #ffffff;
+  padding: 20px;
+  color: #000;
+  font-size: 14px;
+  top: 50%;
+  left: 50%;
+  transform: translateY(-50%) translateX(-50%);
+  border-radius: 19px;
+  text-align: left;
+}
+#user-pop .content div label {
+  display: inline-block;
+  width: 90px;
+  text-align: left;
+  font-weight: 600;
+}
+#user-pop .content div span {
+  display: inline-block;
+  wodth: 100px;
+  text-align: left;
 }
 
 /*# sourceMappingURL=app.css.map */
